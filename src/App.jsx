@@ -638,6 +638,7 @@ export default function App() {
                 creators={creators}
                 onNotify={showNotification}
                 onDeleteBrief={handleDeleteBrief}
+                onSelectCreator={(sample, cr) => setActiveModal({ sample, creator: cr })}
               />
             </div>
           )}
