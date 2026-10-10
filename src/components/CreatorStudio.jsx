@@ -198,29 +198,50 @@ export default function CreatorStudio({ onAddWork, creatorProfile, onDeleteWork,
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block mb-1.5">
-                <span className="text-[11px] uppercase font-semibold text-gray-400 flex items-center gap-1.5"><Image className="w-3.5 h-3.5" /> Image URL</span>
-                <span className="text-[10px] text-gray-500 font-normal normal-case block mt-0.5">Link to your picture / video cover</span>
+                <span className="text-[11px] uppercase font-semibold text-gray-400 flex items-center gap-1.5"><Image className="w-3.5 h-3.5" /> Upload Image</span>
+                <span className="text-[10px] text-gray-500 font-normal normal-case block mt-0.5">Select a picture or video cover</span>
               </label>
-              <input
-                type="url"
-                value={imagePreview}
-                onChange={(e) => setImagePreview(e.target.value)}
-                className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 break-all"
-              />
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setImagePreview(reader.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-orange-500/20 file:text-orange-400 hover:file:bg-orange-500/30"
+                />
+              </div>
             </div>
             
             <div>
               <label className="block mb-1.5">
-                <span className="text-[11px] uppercase font-semibold text-gray-400 flex items-center gap-1.5"><Video className="w-3.5 h-3.5" /> Video URL</span>
-                <span className="text-[10px] text-gray-500 font-normal normal-case block mt-0.5">Link to video file (optional)</span>
+                <span className="text-[11px] uppercase font-semibold text-gray-400 flex items-center gap-1.5"><Video className="w-3.5 h-3.5" /> Upload Video</span>
+                <span className="text-[10px] text-gray-500 font-normal normal-case block mt-0.5">Select a video file (optional)</span>
               </label>
-              <input
-                type="url"
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="https://example.com/video.mp4"
-                className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 break-all"
-              />
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setVideoUrl(reader.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-orange-500/20 file:text-orange-400 hover:file:bg-orange-500/30"
+                />
+              </div>
             </div>
           </div>
 
