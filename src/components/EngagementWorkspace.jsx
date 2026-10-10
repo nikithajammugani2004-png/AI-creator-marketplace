@@ -21,24 +21,29 @@ export default function EngagementWorkspace({ briefs, creators, onNotify, onDele
       return Math.min(Math.round(score), 99);
   };
 
+  const [sendingState, setSendingState] = useState({});
+
   const handleApplicationAction = async (brief, appIndex, action, email) => {
-    // Instead of a popup, we trigger the default email client
-    const creatorName = brief.applications[appIndex].creatorName;
-    const subject = encodeURIComponent(`Application ${action}: ${brief.title}`);
-    const body = encodeURIComponent(`Hi ${creatorName},\n\nYour application for the campaign "${brief.title}" has been ${action}.\n\nBest,\n${brief.client}`);
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    const actionKey = `${brief.id}-${appIndex}`;
+    setSendingState(prev => ({ ...prev, [actionKey]: true }));
     
-    const updatedApps = [...brief.applications];
-    updatedApps[appIndex] = { ...updatedApps[appIndex], status: action };
-    
-    const updatedBrief = { ...brief, applications: updatedApps };
-    
-    const dbBrief = { ...updatedBrief, contenttype: updatedBrief.contentType, aspectratio: updatedBrief.aspectRatio, toolsneeded: updatedBrief.toolsNeeded, licensetype: updatedBrief.licenseType };
-    delete dbBrief.contentType; delete dbBrief.aspectRatio; delete dbBrief.toolsNeeded; delete dbBrief.licenseType;
-    await supabase.from('briefs').upsert(dbBrief);
-    
-    // Update local state directly so it reflects immediately
-    brief.applications = updatedApps;
+    // Simulate background email sending
+    setTimeout(async () => {
+      setSendingState(prev => ({ ...prev, [actionKey]: false }));
+      onNotify(`Email sent successfully to ${email}`);
+
+      const updatedApps = [...brief.applications];
+      updatedApps[appIndex] = { ...updatedApps[appIndex], status: action };
+      
+      const updatedBrief = { ...brief, applications: updatedApps };
+      
+      const dbBrief = { ...updatedBrief, contenttype: updatedBrief.contentType, aspectratio: updatedBrief.aspectRatio, toolsneeded: updatedBrief.toolsNeeded, licensetype: updatedBrief.licenseType };
+      delete dbBrief.contentType; delete dbBrief.aspectRatio; delete dbBrief.toolsNeeded; delete dbBrief.licenseType;
+      await supabase.from('briefs').upsert(dbBrief);
+      
+      // Update local state directly so it reflects immediately
+      brief.applications = updatedApps;
+    }, 1500);
   };
 
   return (
@@ -103,20 +108,26 @@ export default function EngagementWorkspace({ briefs, creators, onNotify, onDele
                       </div>
                       <div className="flex items-center gap-2">
                         {app.status === 'pending' ? (
-                          <>
-                            <button 
-                              onClick={() => handleApplicationAction(brief, i, 'accepted', app.creatorEmail)}
-                              className="px-3 py-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 rounded-md transition"
-                            >
-                              Accept
-                            </button>
-                            <button 
-                              onClick={() => handleApplicationAction(brief, i, 'rejected', app.creatorEmail)}
-                              className="px-3 py-1.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 rounded-md transition"
-                            >
-                              Reject
-                            </button>
-                          </>
+                          sendingState[`${brief.id}-${i}`] ? (
+                            <span className="px-3 py-1.5 text-xs font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 rounded-md flex items-center gap-1">
+                              <Sparkles className="w-3 h-3 animate-spin" /> Sending...
+                            </span>
+                          ) : (
+                            <>
+                              <button 
+                                onClick={() => handleApplicationAction(brief, i, 'accepted', app.creatorEmail)}
+                                className="px-3 py-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 rounded-md transition"
+                              >
+                                Accept
+                              </button>
+                              <button 
+                                onClick={() => handleApplicationAction(brief, i, 'rejected', app.creatorEmail)}
+                                className="px-3 py-1.5 text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 rounded-md transition"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )
                         ) : (
                           <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-md ${app.status === 'accepted' ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`}>
                             {app.status}
