@@ -8,7 +8,7 @@ import EngagementWorkspace from "./components/EngagementWorkspace";
 import CreatorStudio from "./components/CreatorStudio";
 import DataModelViewer from "./components/DataModelViewer";
 import LandingPage from "./components/LandingPage";
-import { AI_MODELS, CONTENT_TYPES, CONTENT_FORMATS } from "./types";
+import { AI_MODELS, CONTENT_TYPES, CONTENT_FORMATS, DOMAINS, REGIONS, AVAILABILITIES, FLEXIBILITIES } from "./types";
 import { Search, Sparkles, CheckCircle, Filter, ArrowLeft, X } from "lucide-react";
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Login from './components/Login';
@@ -33,6 +33,10 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [toolFilter, setToolFilter] = useState("All");
   const [verifiedFilter, setVerifiedFilter] = useState(false);
+  const [domainFilter, setDomainFilter] = useState("All");
+  const [regionFilter, setRegionFilter] = useState("All");
+  const [availabilityFilter, setAvailabilityFilter] = useState("All");
+  const [flexibilityFilter, setFlexibilityFilter] = useState("All");
   
   // Brief Filters
   const [briefTypeFilter, setBriefTypeFilter] = useState("All");
@@ -257,8 +261,14 @@ export default function App() {
 
     const matchesTool = toolFilter === "All" || c.stack.includes(toolFilter);
     const matchesVerified = !verifiedFilter || c.isVerified;
+    
+    // Using string matching / includes for flexibility if data is structured differently
+    const matchesDomain = domainFilter === "All" || (c.domain && c.domain.includes(domainFilter));
+    const matchesRegion = regionFilter === "All" || (c.region && c.region.includes(regionFilter));
+    const matchesAvailability = availabilityFilter === "All" || (c.availability && c.availability.includes(availabilityFilter));
+    const matchesFlexibility = flexibilityFilter === "All" || (c.flexibility && c.flexibility.includes(flexibilityFilter));
 
-    return matchesSearch && matchesTool && matchesVerified;
+    return matchesSearch && matchesTool && matchesVerified && matchesDomain && matchesRegion && matchesAvailability && matchesFlexibility;
   });
 
   const filteredBriefs = briefs.filter((b) => {
@@ -434,11 +444,55 @@ export default function App() {
                   />
                 </div>
 
-                <div className="flex items-center gap-2.5 w-full md:w-auto">
+                <div className="flex flex-wrap items-center gap-2.5 w-full md:flex-1 md:justify-end">
+                  <select
+                    value={domainFilter}
+                    onChange={(e) => setDomainFilter(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                  >
+                    <option value="All">All Domains</option>
+                    {DOMAINS.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={regionFilter}
+                    onChange={(e) => setRegionFilter(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                  >
+                    <option value="All">All Regions</option>
+                    {REGIONS.map((r) => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                  
+                  <select
+                    value={availabilityFilter}
+                    onChange={(e) => setAvailabilityFilter(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                  >
+                    <option value="All">Availability</option>
+                    {AVAILABILITIES.map((a) => (
+                      <option key={a} value={a}>{a}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={flexibilityFilter}
+                    onChange={(e) => setFlexibilityFilter(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                  >
+                    <option value="All">Flexibility</option>
+                    {FLEXIBILITIES.map((f) => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                  </select>
+
                   <select
                     value={toolFilter}
                     onChange={(e) => setToolFilter(e.target.value)}
-                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-4 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
                   >
                     <option value="All">All Pipelines</option>
                     {AI_MODELS.map((m) => (
@@ -448,7 +502,7 @@ export default function App() {
 
                   <button
                     onClick={() => setVerifiedFilter(!verifiedFilter)}
-                    className={`text-xs px-4 py-2.5 rounded-2xl border transition ${
+                    className={`text-xs px-3 py-2.5 rounded-2xl border transition whitespace-nowrap ${
                       verifiedFilter
                         ? "bg-[#FF7B00]/25 border-[#FF7B00] text-[#FFD166] shadow-[0_0_20px_rgba(179,75,255,0.4)]"
                         : "bg-[#0D0D0D] border-white/10 text-gray-400 hover:text-white"

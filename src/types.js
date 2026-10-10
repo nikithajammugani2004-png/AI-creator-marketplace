@@ -34,3 +34,34 @@ export const CONTENT_TYPES = [
   "Short Film"
 ];
 
+export const DOMAINS = [
+  "Tech & Software",
+  "Fashion & Apparel",
+  "Food & Beverage",
+  "Automotive",
+  "Entertainment",
+  "Travel & Lifestyle"
+];
+
+export const REGIONS = [
+  "Global / Remote",
+  "North America",
+  "Europe",
+  "Asia Pacific",
+  "Latin America"
+];
+
+export const AVAILABILITIES = [
+  "Immediate (Next 24h)",
+  "This Week",
+  "Next Week",
+  "Next Month",
+  "Open for Long-term"
+];
+
+export const FLEXIBILITIES = [
+  "Strict (Final Polish Only)",
+  "Moderate (2-3 Revisions)",
+  "Highly Flexible",
+  "Consultation Available"
+];
