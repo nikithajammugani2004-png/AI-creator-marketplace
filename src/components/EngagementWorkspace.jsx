@@ -20,7 +20,10 @@ export default function EngagementWorkspace({ briefs, creators, onNotify, onDele
     updatedApps[appIndex] = { ...updatedApps[appIndex], status: action };
     
     const updatedBrief = { ...brief, applications: updatedApps };
-    await supabase.from('briefs').upsert(updatedBrief);
+    
+    const dbBrief = { ...updatedBrief, contenttype: updatedBrief.contentType, aspectratio: updatedBrief.aspectRatio, toolsneeded: updatedBrief.toolsNeeded, licensetype: updatedBrief.licenseType };
+    delete dbBrief.contentType; delete dbBrief.aspectRatio; delete dbBrief.toolsNeeded; delete dbBrief.licenseType;
+    await supabase.from('briefs').upsert(dbBrief);
     
     // Update local state directly so it reflects immediately
     brief.applications = updatedApps;

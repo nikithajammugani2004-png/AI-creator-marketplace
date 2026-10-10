@@ -78,10 +78,27 @@ export default function App() {
   useEffect(() => {
     async function loadDatabase() {
       const { data: dbCreators } = await supabase.from('creators').select('*');
-      if (dbCreators && dbCreators.length > 0) setCreators(dbCreators);
+      if (dbCreators && dbCreators.length > 0) {
+        const mappedCreators = dbCreators.map(c => ({
+          ...c,
+          aiProbability: c.aiprobability,
+          isVerified: c.isverified,
+          jobsCompleted: c.jobscompleted
+        }));
+        setCreators(mappedCreators);
+      }
 
       const { data: dbBriefs } = await supabase.from('briefs').select('*');
-      if (dbBriefs && dbBriefs.length > 0) setBriefs(dbBriefs);
+      if (dbBriefs && dbBriefs.length > 0) {
+        const mappedBriefs = dbBriefs.map(b => ({
+          ...b,
+          contentType: b.contenttype,
+          aspectRatio: b.aspectratio,
+          toolsNeeded: b.toolsneeded,
+          licenseType: b.licensetype
+        }));
+        setBriefs(mappedBriefs);
+      }
     }
     loadDatabase();
   }, []);
@@ -143,8 +160,7 @@ export default function App() {
   };
 
   const handleAddSample = (newSample) => {
-    // Calculate authenticity based on work and experience (Google Data Simulation)
-    let authenticityScore = 50; // Base
+    let authenticityScore = 50; 
     if (newSample.skills && newSample.skills.split(',').length >= 2) authenticityScore += 15;
     if (newSample.tools && newSample.tools.length >= 2) authenticityScore += 15;
     if (newSample.prompt && newSample.prompt.length > 30) authenticityScore += 10;
@@ -163,7 +179,12 @@ export default function App() {
           aiProbability: authenticityScore
         };
         updated[existingIndex] = updatedProfile;
-        supabase.from('creators').upsert(updatedProfile).then();
+
+        // DB Mapping
+        const dbProfile = { ...updatedProfile, aiprobability: updatedProfile.aiProbability, isverified: updatedProfile.isVerified, jobscompleted: updatedProfile.jobsCompleted };
+        delete dbProfile.aiProbability; delete dbProfile.isVerified; delete dbProfile.jobsCompleted;
+        supabase.from('creators').upsert(dbProfile).then();
+
         return updated;
       } else {
         const newProfile = {
@@ -180,7 +201,12 @@ export default function App() {
           aiProbability: authenticityScore,
           samples: [newSample]
         };
-        supabase.from('creators').insert(newProfile).then();
+
+        // DB Mapping
+        const dbProfile = { ...newProfile, aiprobability: newProfile.aiProbability, isverified: newProfile.isVerified, jobscompleted: newProfile.jobsCompleted };
+        delete dbProfile.aiProbability; delete dbProfile.isVerified; delete dbProfile.jobsCompleted;
+        supabase.from('creators').insert(dbProfile).then();
+
         return [newProfile, ...prevCreators];
       }
     });
@@ -192,7 +218,11 @@ export default function App() {
       const updated = prev.map(c => {
         if (c.email === (session?.user?.email || "creator@synth.ai")) {
           const updatedProfile = { ...c, samples: c.samples.filter(s => s.id !== sampleId) };
-          supabase.from('creators').upsert(updatedProfile).then();
+
+          const dbProfile = { ...updatedProfile, aiprobability: updatedProfile.aiProbability, isverified: updatedProfile.isVerified, jobscompleted: updatedProfile.jobsCompleted };
+          delete dbProfile.aiProbability; delete dbProfile.isVerified; delete dbProfile.jobsCompleted;
+          supabase.from('creators').upsert(dbProfile).then();
+
           return updatedProfile;
         }
         return c;
@@ -204,7 +234,11 @@ export default function App() {
 
   const handlePublishBrief = (newBrief) => {
     const briefRecord = { ...newBrief, id: String(Date.now()) };
-    supabase.from('briefs').insert(briefRecord).then();
+    
+    const dbBrief = { ...briefRecord, contenttype: briefRecord.contentType, aspectratio: briefRecord.aspectRatio, toolsneeded: briefRecord.toolsNeeded, licensetype: briefRecord.licenseType };
+    delete dbBrief.contentType; delete dbBrief.aspectRatio; delete dbBrief.toolsNeeded; delete dbBrief.licenseType;
+    supabase.from('briefs').insert(dbBrief).then();
+    
     setBriefs((prev) => [briefRecord, ...prev]);
     showNotification(`Brief "${newBrief.title}" manifested.`);
   };
@@ -241,7 +275,6 @@ export default function App() {
       return;
     }
     
-    // Check if already applied
     if (brief.applications && brief.applications.find(a => a.creatorEmail === creatorEmail)) {
       showNotification("You have already applied to this campaign.");
       return;
@@ -260,7 +293,10 @@ export default function App() {
       applications: [...(brief.applications || []), newApplication]
     };
     
-    supabase.from('briefs').upsert(updatedBrief).then();
+    const dbBrief = { ...updatedBrief, contenttype: updatedBrief.contentType, aspectratio: updatedBrief.aspectRatio, toolsneeded: updatedBrief.toolsNeeded, licensetype: updatedBrief.licenseType };
+    delete dbBrief.contentType; delete dbBrief.aspectRatio; delete dbBrief.toolsNeeded; delete dbBrief.licenseType;
+    supabase.from('briefs').upsert(dbBrief).then();
+    
     setBriefs(prev => prev.map(b => b.id === brief.id ? updatedBrief : b));
     showNotification("Application successfully sent to the brand!");
   };
@@ -356,6 +392,8 @@ export default function App() {
               onAddWork={handleAddSample} 
               creatorProfile={creators.find(c => c.email === (session?.user?.email || "creator@synth.ai"))}
               onDeleteWork={handleDeleteWork}
+              briefs={briefs}
+              onApplyToBrief={handleApplyToBrief}
             />
           )}
 

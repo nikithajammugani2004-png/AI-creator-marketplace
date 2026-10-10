@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { UploadCloud, CheckCircle2, ShieldCheck, Image, Video, Trash2 } from "lucide-react";
 import { AI_MODELS, CONTENT_FORMATS } from "../types";
 
-export default function CreatorStudio({ onAddWork, creatorProfile, onDeleteWork }) {
+export default function CreatorStudio({ onAddWork, creatorProfile, onDeleteWork, briefs = [], onApplyToBrief }) {
   const [title, setTitle] = useState("");
   const [format, setFormat] = useState(CONTENT_FORMATS[0]);
   const [selectedTools, setSelectedTools] = useState([]);
@@ -13,6 +13,7 @@ export default function CreatorStudio({ onAddWork, creatorProfile, onDeleteWork 
   const [imagePreview, setImagePreview] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [published, setPublished] = useState(false);
+  const [selectedBriefId, setSelectedBriefId] = useState("");
 
   function toggleTool(tool) {
     setSelectedTools(prev =>
@@ -39,6 +40,16 @@ export default function CreatorStudio({ onAddWork, creatorProfile, onDeleteWork 
     };
 
     onAddWork(newSample);
+    
+    // Apply to brief if selected
+    if (selectedBriefId && onApplyToBrief) {
+      const selectedBrief = briefs.find(b => b.id === selectedBriefId);
+      if (selectedBrief) {
+        // Defer applying to give state time to update portfolio if this is first upload
+        setTimeout(() => onApplyToBrief(selectedBrief), 500);
+      }
+    }
+
     setPublished(true);
     setTimeout(() => setPublished(false), 3000);
 
@@ -48,6 +59,7 @@ export default function CreatorStudio({ onAddWork, creatorProfile, onDeleteWork 
     setSkills("");
     setSpecialization("");
     setVideoUrl("");
+    setSelectedBriefId("");
   }
 
   return (
@@ -212,13 +224,30 @@ export default function CreatorStudio({ onAddWork, creatorProfile, onDeleteWork 
             </div>
           </div>
 
+          <div className="pt-2">
+            <label className="block mb-1.5">
+              <span className="text-[11px] uppercase font-semibold text-gray-400 block">Apply to Brand Campaign (Optional)</span>
+            </label>
+            <select
+              value={selectedBriefId}
+              onChange={(e) => setSelectedBriefId(e.target.value)}
+              className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-3 py-3 text-xs text-white focus:outline-none focus:border-orange-500"
+            >
+              <option value="">-- No Campaign (Just save to portfolio) --</option>
+              {briefs.map(b => (
+                <option key={b.id} value={b.id}>{b.title} (by {b.client})</option>
+              ))}
+            </select>
+            <p className="text-[10px] text-gray-500 mt-1">If selected, this portfolio asset will be submitted directly to the brand's workspace.</p>
+          </div>
+
           <button
             type="submit"
             className="w-full py-3 px-4 bg-orange-500 hover:bg-orange-500/90 text-white rounded-xl transition shadow-lg mt-4 flex flex-col items-center justify-center gap-1 text-center"
           >
             <div className="flex items-center gap-2 font-bold text-xs sm:text-sm">
               <UploadCloud className="w-4 h-4 shrink-0" />
-              <span>Publish to Marketplace & Run Clearance Check</span>
+              <span>Publish to Marketplace & Apply </span>
             </div>
             <span className="text-[10px] sm:text-xs font-normal opacity-90">Save work & check commercial rights</span>
           </button>
