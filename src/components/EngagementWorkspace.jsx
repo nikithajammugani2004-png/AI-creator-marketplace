@@ -14,7 +14,11 @@ export default function EngagementWorkspace({ briefs, creators, onNotify, onDele
   }
 
   const handleApplicationAction = async (brief, appIndex, action, email) => {
-    onNotify(`Application ${action}! A notification email has been sent to ${email}.`);
+    // Instead of a popup, we trigger the default email client
+    const creatorName = brief.applications[appIndex].creatorName;
+    const subject = encodeURIComponent(`Application ${action}: ${brief.title}`);
+    const body = encodeURIComponent(`Hi ${creatorName},\n\nYour application for the campaign "${brief.title}" has been ${action}.\n\nBest,\n${brief.client}`);
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     
     const updatedApps = [...brief.applications];
     updatedApps[appIndex] = { ...updatedApps[appIndex], status: action };

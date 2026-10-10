@@ -74,7 +74,7 @@ export default function BriefsView({ briefs, creators, onPublishBrief, onDeleteB
                                 <div>
                                     <p className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold mb-2 flex items-center gap-1">
                                         <CheckCircle2 className="w-3 h-3" />
-                                        Authentic Applicants ({realMatches.length})
+                                        Suggested Creator Matches ({realMatches.length})
                                     </p>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                                         {realMatches.length > 0 ? realMatches.map((creator) => (
@@ -107,7 +107,7 @@ export default function BriefsView({ briefs, creators, onPublishBrief, onDeleteB
                                     <div>
                                         <p className="text-[10px] uppercase tracking-wider text-red-400 font-bold mb-2 flex items-center gap-1">
                                             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                                            Flagged/Suspicious Applicants ({fakeMatches.length})
+                                            Flagged/Suspicious Matches ({fakeMatches.length})
                                         </p>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 opacity-75 grayscale-[50%] hover:grayscale-0 hover:opacity-100 transition-all">
                                             {fakeMatches.map((creator) => (
