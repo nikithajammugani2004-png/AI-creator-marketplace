@@ -132,7 +132,7 @@ export default function Login() {
     <div className="max-w-md mx-auto my-10 p-8 aura-vibe-card rounded-[1.5rem] shadow-2xl text-white relative">
       <button 
         onClick={() => navigate("/")}
-        className="absolute top-6 left-6 p-1 text-gray-400 hover:text-white transition-colors"
+        className="absolute top-6 right-6 p-1 text-gray-400 hover:text-white transition-colors"
         title="Discard and go back"
       >
         <X className="w-5 h-5" />
