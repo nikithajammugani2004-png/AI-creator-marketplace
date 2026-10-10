@@ -24,6 +24,7 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [tab, setTab] = useState("explore");
+  const [tabHistory, setTabHistory] = useState([]);
   const [viewMode, setViewMode] = useState(localStorage.getItem("viewMode") || "brand");
   const [creators, setCreators] = useState([]);
   const [briefs, setBriefs] = useState([]);
@@ -87,10 +88,28 @@ export default function App() {
 
   const navigate = useNavigate();
 
+  const changeTab = (newTab) => {
+    if (newTab !== tab) {
+      setTabHistory(prev => [...prev, tab]);
+      setTab(newTab);
+    }
+  };
+
+  const handleBack = () => {
+    if (tabHistory.length > 0) {
+      const newHistory = [...tabHistory];
+      const previousTab = newHistory.pop();
+      setTabHistory(newHistory);
+      setTab(previousTab);
+    }
+  };
+
   const handleLogin = (selectedRole) => {
     setViewMode(selectedRole);
     localStorage.setItem("viewMode", selectedRole);
-    setTab(selectedRole === "creator" ? "creator-briefs" : "explore");
+    const initialTab = selectedRole === "creator" ? "creator-briefs" : "explore";
+    setTabHistory([]);
+    setTab(initialTab);
     showNotification(`Connected to ${selectedRole.toUpperCase()} Aura space.`);
   };
 
@@ -106,7 +125,9 @@ export default function App() {
     const nextMode = viewMode === "brand" ? "creator" : "brand";
     setViewMode(nextMode);
     localStorage.setItem("viewMode", nextMode);
-    setTab(nextMode === "creator" ? "creator-briefs" : "explore");
+    const initialTab = nextMode === "creator" ? "creator-briefs" : "explore";
+    setTabHistory([]);
+    setTab(initialTab);
     showNotification(`Switched to ${nextMode.toUpperCase()} mode.`);
   };
 
@@ -261,7 +282,7 @@ export default function App() {
 
         <Header
           tab={tab}
-          setTab={setTab}
+          setTab={changeTab}
           viewMode={viewMode}
           onToggleMode={handleToggleMode}
           onSignOut={handleSignOut}
@@ -548,13 +569,15 @@ export default function App() {
         <ChatAssistant viewMode={viewMode} />
 
         {/* Global Floating Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="fixed left-4 top-1/2 -translate-y-1/2 z-50 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.1)] text-gray-400 hover:text-white hover:scale-110 transition hidden md:flex items-center justify-center"
-          title="Go Back"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
+        {tabHistory.length > 0 && (
+          <button
+            onClick={handleBack}
+            className="fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 bg-black/80 backdrop-blur-md border border-white/10 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.2)] text-gray-300 hover:text-white hover:scale-110 transition flex items-center justify-center"
+            title="Go Back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+        )}
       </div>
     );
   };
