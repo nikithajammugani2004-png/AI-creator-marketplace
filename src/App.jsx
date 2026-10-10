@@ -23,7 +23,7 @@ import ChatAssistant from "./components/ChatAssistant";
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const [tab, setTab] = useState("explore");
+  const [tab, setTab] = useState(localStorage.getItem("currentTab") || "explore");
   const [tabHistory, setTabHistory] = useState([]);
   const [viewMode, setViewMode] = useState(localStorage.getItem("viewMode") || "brand");
   const [creators, setCreators] = useState([]);
@@ -92,6 +92,7 @@ export default function App() {
     if (newTab !== tab) {
       setTabHistory(prev => [...prev, tab]);
       setTab(newTab);
+      localStorage.setItem("currentTab", newTab);
     }
   };
 
@@ -101,6 +102,12 @@ export default function App() {
       const previousTab = newHistory.pop();
       setTabHistory(newHistory);
       setTab(previousTab);
+      localStorage.setItem("currentTab", previousTab);
+    } else if (viewMode !== null) {
+      setViewMode(null);
+      localStorage.removeItem("viewMode");
+    } else {
+      handleSignOut();
     }
   };
 
@@ -110,6 +117,7 @@ export default function App() {
     const initialTab = selectedRole === "creator" ? "creator-briefs" : "explore";
     setTabHistory([]);
     setTab(initialTab);
+    localStorage.setItem("currentTab", initialTab);
     showNotification(`Connected to ${selectedRole.toUpperCase()} Aura space.`);
   };
 
@@ -117,6 +125,8 @@ export default function App() {
     await supabase.auth.signOut();
     setIsAuthenticated(false);
     localStorage.removeItem("viewMode");
+    localStorage.removeItem("currentTab");
+    setTabHistory([]);
     showNotification("Disconnected.");
     navigate("/logout");
   };
@@ -128,6 +138,7 @@ export default function App() {
     const initialTab = nextMode === "creator" ? "creator-briefs" : "explore";
     setTabHistory([]);
     setTab(initialTab);
+    localStorage.setItem("currentTab", initialTab);
     showNotification(`Switched to ${nextMode.toUpperCase()} mode.`);
   };
 
@@ -222,8 +233,19 @@ export default function App() {
     return matchesType && matchesFormat;
   });
 
+  const renderBackButton = () => (
+    <button
+      onClick={handleBack}
+      className="fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 bg-black/80 backdrop-blur-md border border-white/10 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.2)] text-gray-300 hover:text-white hover:scale-110 transition flex items-center justify-center"
+      title="Go Back"
+    >
+      <ArrowLeft className="w-5 h-5" />
+    </button>
+  );
+
   const renderRoleSelection = () => (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-300">
+      {renderBackButton()}
       <div className="max-w-3xl w-full relative">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FF7B00]/10 rounded-full blur-[150px] pointer-events-none" />
         
@@ -568,16 +590,7 @@ export default function App() {
         
         <ChatAssistant viewMode={viewMode} />
 
-        {/* Global Floating Back Button */}
-        {tabHistory.length > 0 && (
-          <button
-            onClick={handleBack}
-            className="fixed left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 bg-black/80 backdrop-blur-md border border-white/10 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.2)] text-gray-300 hover:text-white hover:scale-110 transition flex items-center justify-center"
-            title="Go Back"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-        )}
+        {renderBackButton()}
       </div>
     );
   };
