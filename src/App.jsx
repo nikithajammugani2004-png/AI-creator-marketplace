@@ -233,6 +233,38 @@ export default function App() {
     return matchesType && matchesFormat;
   });
 
+  const handleApplyToBrief = (brief) => {
+    const creatorEmail = session?.user?.email || "creator@synth.ai";
+    const creatorProfile = creators.find(c => c.email === creatorEmail);
+    if (!creatorProfile) {
+      showNotification("Please upload a portfolio sample in Studio Upload first to apply!");
+      return;
+    }
+    
+    // Check if already applied
+    if (brief.applications && brief.applications.find(a => a.creatorEmail === creatorEmail)) {
+      showNotification("You have already applied to this campaign.");
+      return;
+    }
+
+    const newApplication = {
+      creatorId: creatorProfile.id,
+      creatorName: creatorProfile.name,
+      creatorEmail: creatorProfile.email,
+      status: "pending",
+      date: new Date().toISOString()
+    };
+    
+    const updatedBrief = {
+      ...brief,
+      applications: [...(brief.applications || []), newApplication]
+    };
+    
+    supabase.from('briefs').upsert(updatedBrief).then();
+    setBriefs(prev => prev.map(b => b.id === brief.id ? updatedBrief : b));
+    showNotification("Application successfully sent to the brand!");
+  };
+
   const renderBackButton = () => (
     <button
       onClick={handleBack}
@@ -548,7 +580,10 @@ export default function App() {
                           </span>
                         ))}
                       </div>
-                      <button className="w-full mt-2 py-2.5 rounded-xl bg-gradient-to-r from-[#FF7B00]/20 to-[#E63946]/20 border border-[#FF7B00]/30 text-white text-xs font-bold hover:bg-[#FF7B00]/40 transition">
+                      <button 
+                        onClick={() => handleApplyToBrief(brief)}
+                        className="w-full mt-2 py-2.5 rounded-xl bg-gradient-to-r from-[#FF7B00]/20 to-[#E63946]/20 border border-[#FF7B00]/30 text-white text-xs font-bold hover:bg-[#FF7B00]/40 transition"
+                      >
                         Apply to Campaign &rarr;
                       </button>
                     </div>
