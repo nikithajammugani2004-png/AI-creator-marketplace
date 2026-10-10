@@ -85,7 +85,7 @@ export default function ChatAssistant({ viewMode }) {
       )}
 
       {isOpen && (
-        <div className="fixed top-0 right-0 z-50 w-full sm:w-[400px] h-screen bg-[#0D0D0D]/95 backdrop-blur-xl flex flex-col shadow-2xl border-l border-white/10 animate-in slide-in-from-right-8 duration-300">
+        <div className="fixed top-0 right-0 z-50 w-full sm:w-[400px] h-[100dvh] bg-[#0D0D0D]/95 backdrop-blur-xl flex flex-col shadow-2xl border-l border-white/10 animate-in slide-in-from-right-8 duration-300">
           <div className="bg-[#0D0D0D] p-4 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5 text-[#FF7B00]" />

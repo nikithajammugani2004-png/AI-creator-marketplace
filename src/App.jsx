@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import CreatorCard from "./components/CreatorCard";
 import PortfolioModal from "./components/PortfolioModal";
+import CreatorProfileModal from "./components/CreatorProfileModal";
 import BriefsView from "./components/BriefsView";
 import EngagementWorkspace from "./components/EngagementWorkspace";
 import CreatorStudio from "./components/CreatorStudio";
@@ -35,6 +36,7 @@ export default function App() {
   const [briefTypeFilter, setBriefTypeFilter] = useState("All");
   const [briefFormatFilter, setBriefFormatFilter] = useState("All");
   const [activeModal, setActiveModal] = useState(null);
+  const [activeProfileModal, setActiveProfileModal] = useState(null);
   const [toast, setToast] = useState(null);
 
   const showNotification = (message) => {
@@ -353,6 +355,7 @@ export default function App() {
                             creator={creator}
                             onOpenWork={(sample, cr) => setActiveModal({ sample, creator: cr })}
                             onMessage={(cr) => setActiveModal({ sample: cr.samples[0], creator: cr })}
+                            onOpenProfile={(cr) => setActiveProfileModal(cr)}
                           />
                           <div className="absolute top-4 right-4 bg-emerald-500 text-darkBg text-[10px] font-bold px-2 py-1 rounded shadow-lg z-20">
                             AUTHENTIC
@@ -382,6 +385,7 @@ export default function App() {
                             creator={creator}
                             onOpenWork={(sample, cr) => setActiveModal({ sample, creator: cr })}
                             onMessage={(cr) => setActiveModal({ sample: cr.samples[0], creator: cr })}
+                            onOpenProfile={(cr) => setActiveProfileModal(cr)}
                           />
                           <div className="absolute top-4 right-4 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg z-20">
                             FLAGGED
@@ -522,6 +526,17 @@ export default function App() {
             sample={activeModal.sample}
             creator={activeModal.creator}
             onClose={() => setActiveModal(null)}
+          />
+        )}
+
+        {activeProfileModal && (
+          <CreatorProfileModal
+            creator={activeProfileModal}
+            onOpenWork={(sample, cr) => {
+              setActiveProfileModal(null);
+              setActiveModal({ sample, creator: cr });
+            }}
+            onClose={() => setActiveProfileModal(null)}
           />
         )}
         

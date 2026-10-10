@@ -1,17 +1,20 @@
 import React from "react";
 import { BadgeCheck, ArrowUpRight } from "lucide-react";
 
-export default function CreatorCard({ creator, onOpenWork, onMessage }) {
+export default function CreatorCard({ creator, onOpenWork, onMessage, onOpenProfile }) {
   return (
     <div className="aura-vibe-card p-6 flex flex-col justify-between group overflow-hidden">
       <div>
         <div className="flex items-start justify-between gap-3 mb-4">
-          <div className="flex items-center gap-3.5">
+          <div 
+            className="flex items-center gap-3.5 cursor-pointer group/profile"
+            onClick={() => onOpenProfile && onOpenProfile(creator)}
+          >
             <div className="relative">
               <img
                 src={creator.avatar}
                 alt={creator.name}
-                className="w-14 h-14 rounded-2xl object-cover border border-white/15 shadow-md"
+                className="w-14 h-14 rounded-2xl object-cover border border-white/15 shadow-md group-hover/profile:border-[#FF7B00]/50 transition"
               />
               {creator.isVerified && (
                 <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#0D0D0D] flex items-center justify-center border border-white/10">
@@ -20,7 +23,7 @@ export default function CreatorCard({ creator, onOpenWork, onMessage }) {
               )}
             </div>
             <div>
-              <h3 className="font-bold text-white text-base leading-tight group-hover:text-[#FFD166] transition">
+              <h3 className="font-bold text-white text-base leading-tight group-hover/profile:text-[#FFD166] transition">
                 {creator.name}
               </h3>
               <p className="text-[11px] text-gray-400 mt-0.5">{creator.tag} &bull; {creator.city}</p>
