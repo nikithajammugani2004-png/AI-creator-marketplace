@@ -14,7 +14,7 @@ import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-
 import Login from './components/Login';
 import Logout from './components/Logout';
 import { supabase } from "./supabaseClient";
-
+import { dummyCreators, dummyBriefs } from "./dummyData";
 
 
 
@@ -93,7 +93,9 @@ export default function App() {
           isVerified: c.isverified,
           jobsCompleted: c.jobscompleted
         }));
-        setCreators(mappedCreators);
+        setCreators([...dummyCreators, ...mappedCreators]);
+      } else {
+        setCreators(dummyCreators); // Fallback to dummy data
       }
 
       const { data: dbBriefs } = await supabase.from('briefs').select('*');
@@ -105,7 +107,9 @@ export default function App() {
           toolsNeeded: b.toolsneeded,
           licenseType: b.licensetype
         }));
-        setBriefs(mappedBriefs);
+        setBriefs([...dummyBriefs, ...mappedBriefs]);
+      } else {
+        setBriefs(dummyBriefs); // Fallback to dummy data
       }
     }
     loadDatabase();
