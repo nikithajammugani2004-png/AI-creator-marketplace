@@ -9,8 +9,8 @@ import CreatorStudio from "./components/CreatorStudio";
 import DataModelViewer from "./components/DataModelViewer";
 import LandingPage from "./components/LandingPage";
 import { AI_MODELS, CONTENT_TYPES, CONTENT_FORMATS } from "./types";
-import { Search, Sparkles, CheckCircle, Filter } from "lucide-react";
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Search, Sparkles, CheckCircle, Filter, ArrowLeft } from "lucide-react";
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import Logout from './components/Logout';
 import { supabase } from "./supabaseClient";
@@ -22,8 +22,9 @@ import ChatAssistant from "./components/ChatAssistant";
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [tab, setTab] = useState("explore");
-  const [viewMode, setViewMode] = useState(null);
+  const [viewMode, setViewMode] = useState(localStorage.getItem("viewMode") || "brand");
   const [creators, setCreators] = useState([]);
   const [briefs, setBriefs] = useState([]);
 
@@ -54,6 +55,7 @@ export default function App() {
       if (session) {
         setIsAuthenticated(true);
       }
+      setIsAuthLoading(false);
     });
 
     const {
@@ -65,6 +67,7 @@ export default function App() {
       } else {
         setIsAuthenticated(false);
       }
+      setIsAuthLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -86,6 +89,7 @@ export default function App() {
 
   const handleLogin = (selectedRole) => {
     setViewMode(selectedRole);
+    localStorage.setItem("viewMode", selectedRole);
     setTab(selectedRole === "creator" ? "creator-briefs" : "explore");
     showNotification(`Connected to ${selectedRole.toUpperCase()} Aura space.`);
   };
@@ -93,7 +97,7 @@ export default function App() {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setIsAuthenticated(false);
-    setViewMode(null);
+    localStorage.removeItem("viewMode");
     showNotification("Disconnected.");
     navigate("/logout");
   };
@@ -101,6 +105,7 @@ export default function App() {
   const handleToggleMode = () => {
     const nextMode = viewMode === "brand" ? "creator" : "brand";
     setViewMode(nextMode);
+    localStorage.setItem("viewMode", nextMode);
     setTab(nextMode === "creator" ? "creator-briefs" : "explore");
     showNotification(`Switched to ${nextMode.toUpperCase()} mode.`);
   };
@@ -541,9 +546,26 @@ export default function App() {
         )}
         
         <ChatAssistant viewMode={viewMode} />
+
+        {/* Global Floating Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="fixed left-4 top-1/2 -translate-y-1/2 z-50 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.1)] text-gray-400 hover:text-white hover:scale-110 transition hidden md:flex items-center justify-center"
+          title="Go Back"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
       </div>
     );
   };
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[#FF7B00] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <Routes>
