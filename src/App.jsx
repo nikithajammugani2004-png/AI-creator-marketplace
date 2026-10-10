@@ -9,7 +9,7 @@ import CreatorStudio from "./components/CreatorStudio";
 import DataModelViewer from "./components/DataModelViewer";
 import LandingPage from "./components/LandingPage";
 import { AI_MODELS, CONTENT_TYPES, CONTENT_FORMATS } from "./types";
-import { Search, Sparkles, CheckCircle, Filter, ArrowLeft } from "lucide-react";
+import { Search, Sparkles, CheckCircle, Filter, ArrowLeft, X } from "lucide-react";
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import Logout from './components/Logout';
@@ -246,7 +246,14 @@ export default function App() {
   const renderRoleSelection = () => (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-300">
       {renderBackButton()}
-      <div className="max-w-3xl w-full relative">
+      <div className="max-w-3xl w-full relative bg-[#171321]/40 border border-white/10 rounded-[2.5rem] p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
+        <button
+          onClick={() => handleSignOut()}
+          className="absolute top-4 sm:top-6 right-4 sm:right-6 p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors z-50"
+          title="Discard and return to landing page"
+        >
+          <X className="w-6 h-6" />
+        </button>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FF7B00]/10 rounded-full blur-[150px] pointer-events-none" />
         
         <div className="relative z-10 text-center mb-10">
