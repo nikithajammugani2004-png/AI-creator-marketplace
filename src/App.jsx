@@ -274,6 +274,19 @@ export default function App() {
   const filteredBriefs = briefs.filter((b) => {
     const matchesType = briefTypeFilter === "All" || b.contentType === briefTypeFilter;
     const matchesFormat = briefFormatFilter === "All" || b.format === briefFormatFilter;
+    
+    // Hide briefs the creator has applied to if they are just browsing open campaigns
+    const creatorEmail = session?.user?.email || "creator@synth.ai";
+    const hasApplied = b.applications && b.applications.some(a => a.creatorEmail === creatorEmail);
+    
+    if (tab === "creator-briefs" && hasApplied) {
+      return false; // Disappear after submitting
+    }
+    
+    if (tab === "creator-applications" && !hasApplied) {
+      return false; // Only show applied
+    }
+
     return matchesType && matchesFormat;
   });
 
@@ -680,6 +693,68 @@ export default function App() {
                       </button>
                     </div>
                   ))
+                )}
+              </div>
+            </div>
+          )}
+          {tab === "creator-applications" && (
+            <div className="max-w-4xl mx-auto space-y-6">
+              <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 p-8 shadow-2xl bg-[#0D0D0D]">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#0D0D0D] via-[#1a2e00] to-[#0e3d23] opacity-90" />
+                <div className="relative z-10 max-w-2xl space-y-4">
+                  <h1 className="text-3xl font-black text-white tracking-tight leading-tight">
+                    My Applications
+                  </h1>
+                  <p className="text-sm text-gray-300 leading-relaxed font-normal">
+                    Track the status of the campaigns you've applied to. Brands will review your workflow and portfolio before reaching out to book a production sprint.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4">
+                {filteredBriefs.length === 0 ? (
+                  <div className="col-span-full py-12 text-center text-gray-500 border border-dashed border-white/10 rounded-2xl">
+                    You haven't applied to any campaigns yet. Browse 'Open Campaigns' to get started!
+                  </div>
+                ) : (
+                  filteredBriefs.map((brief) => {
+                    const creatorEmail = session?.user?.email || "creator@synth.ai";
+                    const application = brief.applications?.find(a => a.creatorEmail === creatorEmail);
+                    
+                    return (
+                      <div key={brief.id} className="aura-vibe-card rounded-2xl p-6 space-y-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-center gap-3">
+                            <span className="text-[11px] font-mono text-emerald-500 block">{brief.client}</span>
+                            <span className="text-[10px] bg-white/5 border border-white/10 px-2 py-1 rounded-md text-amber-200">
+                              {brief.contentType}
+                            </span>
+                          </div>
+                          <h3 className="text-lg font-bold text-white">{brief.title}</h3>
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            {brief.toolsNeeded?.map(tool => (
+                              <span key={tool} className="text-[10px] bg-[#0D0D0D] border border-white/5 px-2 py-1 rounded-md text-gray-400">
+                                {tool}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-col md:items-end gap-2 shrink-0">
+                          <span className="bg-[#0D0D0D] border border-white/10 px-3 py-1.5 rounded-lg text-emerald-400 text-xs font-mono font-bold text-center md:text-right">
+                            {brief.budget}
+                          </span>
+                          <div className="bg-[#FF7B00]/10 border border-[#FF7B00]/30 text-[#FFD166] px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
+                            <CheckCircle className="w-3.5 h-3.5" />
+                            Application Submitted
+                          </div>
+                          <div className="text-[10px] text-gray-500 text-right">
+                            Applied on: {new Date(application?.date || Date.now()).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>
