@@ -5,6 +5,8 @@ import ClearanceModal from "./ClearanceModal";
 export default function PortfolioModal({ sample, creator, onClose }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [showClearance, setShowClearance] = useState(false);
+  const [bookingState, setBookingState] = useState('idle'); // 'idle', 'drafting', 'review'
+  const [aiDraft, setAiDraft] = useState('');
 
   if (!sample) return null;
 
@@ -113,16 +115,60 @@ export default function PortfolioModal({ sample, creator, onClose }) {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => {
-                    const subject = encodeURIComponent(`Production Inquiry: ${sample.title}`);
-                    const body = encodeURIComponent(`Hi ${creator.name},\n\nI am interested in booking a production with you based on your workflow for "${sample.title}".\n\nPlease let me know your availability to discuss this further.\n\nThanks!`);
-                    window.location.href = `mailto:${creator.email || 'creator@example.com'}?subject=${subject}&body=${body}`;
-                  }}
-                  className="w-full py-2.5 bg-gradient-to-r from-neonCyan to-neonPurple text-darkBg text-xs font-bold rounded-xl hover:opacity-95 transition"
-                >
-                  Book Production With This Workflow
-                </button>
+                {bookingState === 'idle' && (
+                  <button
+                    onClick={() => {
+                      setBookingState('drafting');
+                      setTimeout(() => {
+                        const generatedBody = `Hi ${creator.name},\n\nI was incredibly impressed by your workflow for "${sample.title}". Your use of ${sample.tools.join(', ')} perfectly aligns with our upcoming campaign needs.\n\nOur AI Matchmaker identified your profile as a high-probability match for our brand requirements. We'd love to book a production sprint with you using this exact pipeline.\n\nPlease let us know your availability to discuss this further.\n\nBest regards,\nAura Brand Team`;
+                        setAiDraft(generatedBody);
+                        setBookingState('review');
+                      }, 1500);
+                    }}
+                    className="w-full py-2.5 bg-gradient-to-r from-neonCyan to-neonPurple text-darkBg text-xs font-bold rounded-xl hover:opacity-95 transition"
+                  >
+                    Book Production With This Workflow
+                  </button>
+                )}
+
+                {bookingState === 'drafting' && (
+                  <div className="w-full py-2.5 bg-[#0D0D0D] border border-white/10 text-emerald-400 text-xs font-bold rounded-xl flex items-center justify-center gap-2">
+                    <Sparkles className="w-4 h-4 animate-spin text-amber-500" />
+                    AI is drafting your inquiry...
+                  </div>
+                )}
+
+                {bookingState === 'review' && (
+                  <div className="space-y-3 bg-[#0D0D0D] border border-emerald-500/30 rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3" /> AI Generated Draft
+                      </span>
+                      <button 
+                        onClick={() => setBookingState('idle')}
+                        className="text-[10px] text-gray-500 hover:text-white"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                    <textarea 
+                      className="w-full h-32 bg-[#1A1A1A] border border-white/10 rounded-lg p-2 text-xs text-gray-300 focus:outline-none focus:border-amber-500"
+                      value={aiDraft}
+                      onChange={(e) => setAiDraft(e.target.value)}
+                    />
+                    <button
+                      onClick={() => {
+                        const subject = encodeURIComponent(`Production Inquiry: ${sample.title}`);
+                        const body = encodeURIComponent(aiDraft);
+                        window.location.href = `mailto:${creator.email || 'creator@example.com'}?subject=${subject}&body=${body}`;
+                        setBookingState('idle');
+                      }}
+                      className="w-full py-2 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-lg hover:bg-emerald-500/30 transition border border-emerald-500/50"
+                    >
+                      Send Inquiry via Email
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
