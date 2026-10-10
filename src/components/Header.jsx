@@ -106,8 +106,8 @@ export default function Header({ tab, setTab, viewMode, onToggleMode, onSignOut,
                       : "text-gray-400 hover:text-gray-200"
                   }`}
                 >
-                  <FileSpreadsheet className="w-3.5 h-3.5 text-[#FF7B00]" />
-                  <span>Briefs & Matchmaker</span>
+                  <Compass className="w-3.5 h-3.5 text-[#E63946]" />
+                  <span>Discover Open Campaigns</span>
                 </button>
                 <button
                   onClick={() => setTab("studio")}
