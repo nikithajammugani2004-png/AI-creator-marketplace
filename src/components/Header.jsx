@@ -125,15 +125,6 @@ export default function Header({ tab, setTab, viewMode, onToggleMode, onSignOut,
           </nav>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={onToggleMode}
-              className="text-xs px-3 py-1.5 md:px-4 md:py-2 border border-white/10 rounded-full text-gray-300 hover:bg-white/[0.08] transition flex items-center gap-1.5"
-            >
-              <span className="hidden md:inline text-gray-400">Mode:</span>
-              <span className="font-bold bg-gradient-to-r from-[#FF7B00] to-[#E63946] bg-clip-text text-transparent uppercase text-[11px] tracking-wider">
-                {viewMode}
-              </span>
-            </button>
 
             <div className="relative flex items-center pl-3 ml-1 border-l border-white/10">
               {/* Profile Bubble Trigger */}

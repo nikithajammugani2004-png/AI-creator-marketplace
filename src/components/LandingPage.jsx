@@ -28,12 +28,20 @@ export default function LandingPage({ onEnterApp }) {
         <div className="flex items-center gap-3">
           <Link
             to="/login"
+            onClick={() => {
+              localStorage.setItem('viewMode', 'brand');
+              localStorage.setItem('currentTab', 'explore');
+            }}
             className="text-xs font-semibold px-4 py-2 rounded-xl text-gray-300 hover:text-white transition"
           >
             Brand Login
           </Link>
           <Link
             to="/login"
+            onClick={() => {
+              localStorage.setItem('viewMode', 'creator');
+              localStorage.setItem('currentTab', 'creator-briefs');
+            }}
             className="text-xs font-semibold px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white transition backdrop-blur-md hover:border-[#FF7B00]/40"
           >
             Creator Portal
@@ -62,6 +70,10 @@ export default function LandingPage({ onEnterApp }) {
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <Link
             to="/login"
+            onClick={() => {
+              localStorage.setItem('viewMode', 'brand');
+              localStorage.setItem('currentTab', 'explore');
+            }}
             className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF7B00] to-[#E63946] text-white font-bold text-xs tracking-wide shadow-auraGlow hover:opacity-95 transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02]"
           >
             <span>Launch As Brand</span>
@@ -69,6 +81,10 @@ export default function LandingPage({ onEnterApp }) {
           </Link>
           <Link
             to="/login"
+            onClick={() => {
+              localStorage.setItem('viewMode', 'creator');
+              localStorage.setItem('currentTab', 'creator-briefs');
+            }}
             className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white font-semibold text-xs tracking-wide transition-all duration-300 backdrop-blur-md hover:border-[#E63946]/40"
           >
             Enter As Creator
