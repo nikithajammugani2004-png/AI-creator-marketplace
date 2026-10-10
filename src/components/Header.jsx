@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Sparkles, Compass, FileSpreadsheet, Layers, LogOut, PlusCircle, X, User } from "lucide-react";
+import { Sparkles, Compass, FileSpreadsheet, Layers, LogOut, PlusCircle, X, User, Menu } from "lucide-react";
 
 export default function Header({ tab, setTab, viewMode, onToggleMode, onSignOut, user }) {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const getUserInitials = () => {
     if (!user) return "?";
@@ -23,18 +24,26 @@ export default function Header({ tab, setTab, viewMode, onToggleMode, onSignOut,
     <>
       <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0D0D0D]/80 backdrop-blur-2xl px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div
-            className="flex items-center gap-3 cursor-pointer group"
-            onClick={() => setTab("explore")}
-          >
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#FF7B00] to-[#E63946] p-[1.5px] shadow-[0_0_20px_rgba(179,75,255,0.4)]">
-              <div className="w-full h-full bg-[#0D0D0D] rounded-2xl flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-[#E63946]" />
+          <div className="flex items-center gap-3 cursor-pointer group">
+            <button 
+              className="md:hidden p-2 -ml-2 text-gray-400 hover:text-white"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+            <div
+              className="flex items-center gap-3"
+              onClick={() => setTab("explore")}
+            >
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#FF7B00] to-[#E63946] p-[1.5px] shadow-[0_0_20px_rgba(179,75,255,0.4)]">
+                <div className="w-full h-full bg-[#0D0D0D] rounded-2xl flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-[#E63946]" />
+                </div>
               </div>
+              <span className="font-extrabold tracking-wide text-white text-base hidden sm:inline-block">
+                AI Creator Marketplace
+              </span>
             </div>
-            <span className="font-extrabold tracking-wide text-white text-base">
-              AI Creator Marketplace
-            </span>
           </div>
 
           <nav className="hidden md:flex items-center gap-1.5 bg-[#171321]/90 p-1.5 rounded-full border border-white/10 backdrop-blur-xl">
@@ -177,6 +186,87 @@ export default function Header({ tab, setTab, viewMode, onToggleMode, onSignOut,
             </div>
           </div>
         </div>
+
+        {/* Mobile Navigation Dropdown */}
+        {isMobileMenuOpen && (
+          <nav className="md:hidden mt-4 pt-4 border-t border-white/10 flex flex-col gap-2">
+            {viewMode === "brand" && (
+              <>
+                <button
+                  onClick={() => { setTab("explore"); setIsMobileMenuOpen(false); }}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    tab === "explore"
+                      ? "bg-gradient-to-r from-[#FF7B00]/30 to-[#E63946]/30 text-white border border-[#FF7B00]/50"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <Compass className="w-5 h-5 text-[#FF7B00]" />
+                  <span>Discover Talent</span>
+                </button>
+                <button
+                  onClick={() => { setTab("briefs"); setIsMobileMenuOpen(false); }}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    tab === "briefs"
+                      ? "bg-gradient-to-r from-[#FF7B00]/30 to-[#E63946]/30 text-white border border-[#FF7B00]/50"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FileSpreadsheet className="w-5 h-5 text-[#E63946]" />
+                  <span>Briefs & Matchmaker</span>
+                </button>
+                <button
+                  onClick={() => { setTab("workspace"); setIsMobileMenuOpen(false); }}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    tab === "workspace"
+                      ? "bg-gradient-to-r from-[#FF7B00]/30 to-[#E63946]/30 text-white border border-[#FF7B00]/50"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <Sparkles className="w-5 h-5 text-[#FFD166]" />
+                  <span>Workspace</span>
+                </button>
+                <button
+                  onClick={() => { setTab("architecture"); setIsMobileMenuOpen(false); }}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    tab === "architecture"
+                      ? "bg-gradient-to-r from-[#FF7B00]/30 to-[#E63946]/30 text-white border border-[#FF7B00]/50"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <Layers className="w-5 h-5 text-[#FF7B00]" />
+                  <span>Brand Database</span>
+                </button>
+              </>
+            )}
+
+            {viewMode === "creator" && (
+              <>
+                <button
+                  onClick={() => { setTab("creator-briefs"); setIsMobileMenuOpen(false); }}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    tab === "creator-briefs"
+                      ? "bg-gradient-to-r from-[#FF7B00]/30 to-[#E63946]/30 text-white border border-[#FF7B00]/50"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <FileSpreadsheet className="w-5 h-5 text-[#FF7B00]" />
+                  <span>Briefs & Matchmaker</span>
+                </button>
+                <button
+                  onClick={() => { setTab("studio"); setIsMobileMenuOpen(false); }}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    tab === "studio"
+                      ? "bg-gradient-to-r from-[#FF7B00] to-[#E63946] text-white"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <PlusCircle className="w-5 h-5" />
+                  <span>Studio Upload</span>
+                </button>
+              </>
+            )}
+          </nav>
+        )}
       </header>
 
       {/* Logout Confirmation Modal */}
