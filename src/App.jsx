@@ -41,6 +41,10 @@ export default function App() {
   // Brief Filters
   const [briefTypeFilter, setBriefTypeFilter] = useState("All");
   const [briefFormatFilter, setBriefFormatFilter] = useState("All");
+  const [briefDomainFilter, setBriefDomainFilter] = useState("All");
+  const [briefRegionFilter, setBriefRegionFilter] = useState("All");
+  const [briefAvailabilityFilter, setBriefAvailabilityFilter] = useState("All");
+  const [briefFlexibilityFilter, setBriefFlexibilityFilter] = useState("All");
   const [activeModal, setActiveModal] = useState(null);
   const [activeProfileModal, setActiveProfileModal] = useState(null);
   const [toast, setToast] = useState(null);
@@ -287,7 +291,12 @@ export default function App() {
       return false; // Only show applied
     }
 
-    return matchesType && matchesFormat;
+    const matchesDomain = briefDomainFilter === "All" || (b.domain && b.domain.includes(briefDomainFilter));
+    const matchesRegion = briefRegionFilter === "All" || (b.region && b.region.includes(briefRegionFilter));
+    const matchesAvailability = briefAvailabilityFilter === "All" || (b.availability && b.availability.includes(briefAvailabilityFilter));
+    const matchesFlexibility = briefFlexibilityFilter === "All" || (b.flexibility && b.flexibility.includes(briefFlexibilityFilter));
+
+    return matchesType && matchesFormat && matchesDomain && matchesRegion && matchesAvailability && matchesFlexibility;
   });
 
   const handleApplyToBrief = (brief) => {
@@ -621,11 +630,55 @@ export default function App() {
                 <div className="flex items-center gap-2 w-full md:w-auto text-sm text-gray-400 font-semibold">
                   <Filter className="w-4 h-4" /> Filter Briefs:
                 </div>
-                <div className="flex items-center gap-2.5 w-full md:w-auto">
+                <div className="flex flex-wrap items-center gap-2.5 w-full md:flex-1 md:justify-end">
+                  <select
+                    value={briefDomainFilter}
+                    onChange={(e) => setBriefDomainFilter(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                  >
+                    <option value="All">All Domains</option>
+                    {DOMAINS.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={briefRegionFilter}
+                    onChange={(e) => setBriefRegionFilter(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                  >
+                    <option value="All">All Regions</option>
+                    {REGIONS.map((r) => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                  
+                  <select
+                    value={briefAvailabilityFilter}
+                    onChange={(e) => setBriefAvailabilityFilter(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                  >
+                    <option value="All">Availability</option>
+                    {AVAILABILITIES.map((a) => (
+                      <option key={a} value={a}>{a}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={briefFlexibilityFilter}
+                    onChange={(e) => setBriefFlexibilityFilter(e.target.value)}
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                  >
+                    <option value="All">Flexibility</option>
+                    {FLEXIBILITIES.map((f) => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                  </select>
+
                   <select
                     value={briefTypeFilter}
                     onChange={(e) => setBriefTypeFilter(e.target.value)}
-                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-4 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
                   >
                     <option value="All">All Content Types</option>
                     {CONTENT_TYPES.map(c => (
@@ -636,7 +689,7 @@ export default function App() {
                   <select
                     value={briefFormatFilter}
                     onChange={(e) => setBriefFormatFilter(e.target.value)}
-                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-4 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
+                    className="bg-[#0D0D0D] border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-[#FF7B00]"
                   >
                     <option value="All">All Formats</option>
                     {CONTENT_FORMATS.map(f => (
