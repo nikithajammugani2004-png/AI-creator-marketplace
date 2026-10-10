@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { supabase } from "/src/supabaseClient.js";
+import { useNavigate } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [token, setToken] = useState('');
@@ -126,8 +129,15 @@ export default function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto my-10 p-8 aura-vibe-card rounded-[1.5rem] shadow-2xl text-white">
-      <h2 className="text-2xl font-bold mb-2 text-center text-white">Enter The Platform</h2>
+    <div className="max-w-md mx-auto my-10 p-8 aura-vibe-card rounded-[1.5rem] shadow-2xl text-white relative">
+      <button 
+        onClick={() => navigate("/")}
+        className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+        title="Discard and go back"
+      >
+        <X className="w-5 h-5" />
+      </button>
+      <h2 className="text-2xl font-bold mb-2 text-center text-white mt-2">Enter The Platform</h2>
       <p className="text-center text-xs text-gray-400 mb-6">
         {authFlow === 'signup' ? 'Create a new account' : 'Sign in to continue'}
       </p>
