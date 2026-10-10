@@ -114,7 +114,11 @@ export default function PortfolioModal({ sample, creator, onClose }) {
                 </div>
 
                 <button
-                  onClick={() => alert(`Inquiry initiated with ${creator.name}`)}
+                  onClick={() => {
+                    const subject = encodeURIComponent(`Production Inquiry: ${sample.title}`);
+                    const body = encodeURIComponent(`Hi ${creator.name},\n\nI am interested in booking a production with you based on your workflow for "${sample.title}".\n\nPlease let me know your availability to discuss this further.\n\nThanks!`);
+                    window.location.href = `mailto:${creator.email || 'creator@example.com'}?subject=${subject}&body=${body}`;
+                  }}
                   className="w-full py-2.5 bg-gradient-to-r from-neonCyan to-neonPurple text-darkBg text-xs font-bold rounded-xl hover:opacity-95 transition"
                 >
                   Book Production With This Workflow
