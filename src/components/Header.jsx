@@ -91,7 +91,7 @@ export default function Header({ tab, setTab, viewMode, onToggleMode, onSignOut,
                   }`}
                 >
                   <Layers className="w-3.5 h-3.5 text-[#FF7B00]" />
-                  <span>Brand Database</span>
+                  <span>Brand History</span>
                 </button>
               </>
             )}
@@ -225,7 +225,7 @@ export default function Header({ tab, setTab, viewMode, onToggleMode, onSignOut,
                   }`}
                 >
                   <Layers className="w-5 h-5 text-[#FF7B00]" />
-                  <span>Brand Database</span>
+                  <span>Brand History</span>
                 </button>
               </>
             )}
